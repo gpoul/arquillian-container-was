@@ -46,9 +46,7 @@
 				<executions>
 					<execution>
 						<id>create-server</id>
-						<!-- Using the process-test-classes phase is a workaround as long as 
-							using the test phase here does not execute in the correct order -->
-						<phase>process-test-classes</phase>
+						<phase>test</phase>
 						<goals>
 							<goal>create-server</goal>
 						</goals>
