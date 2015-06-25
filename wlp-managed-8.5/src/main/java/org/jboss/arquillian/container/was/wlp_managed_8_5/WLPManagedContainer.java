@@ -401,8 +401,32 @@ public class WLPManagedContainer implements DeployableContainer<WLPManagedContai
             // Remove archive from the apps directory
             String appDir = getAppDirectory();
             File exportedArchiveLocation = new File(appDir, archiveName);
-            if (!exportedArchiveLocation.delete())
-               throw new DeploymentException("Unable to delete archive from apps directory");
+            if (!exportedArchiveLocation.delete()) {
+               if (exportedArchiveLocation.isFile()) {
+                  if (!exportedArchiveLocation.canWrite()) {
+                     log.finest("File is a regular file but cannot be written; trying to set writable");
+                     exportedArchiveLocation.setWritable(true, false);
+                  }
+                  if (!exportedArchiveLocation.delete()) {
+                     log.finest("Second deletion retry failed as well");
+                     Thread.sleep(5000);
+                     if (!exportedArchiveLocation.delete()) {
+                        log.finest("Third deferred deletion retry failed as well");
+                        System.gc();
+                        if (!exportedArchiveLocation.delete()) {
+                           log.finest("Fourth deletion retry after GC failed as well");
+                           exportedArchiveLocation.deleteOnExit();
+                           throw new DeploymentException("Unable to delete archive from apps directory");
+                        } else
+                           log.finest("Fourth deletion retry after GC succeeded");
+                     } else
+                        log.finest("Third deletion retry succeeded");
+                  } else
+                     log.finest("Second deletion retry succeeded");
+               } else {
+                  throw new DeploymentException("Archive file to delete is not a regular file");
+               }
+            }
          }
          else {
             // Remove archive from the dropIn directory, which causes undeploy
