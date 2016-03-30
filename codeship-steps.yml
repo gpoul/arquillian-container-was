@@ -1,0 +1,12 @@
+- type: serial
+  encrypted_dockercfg_path: dockercfg.encrypted
+  service: app
+  steps:
+    - name: WAS test
+      command: 
+       bash -c ". /opt/IBM/WebSphere/AppServer/profiles/AppSrv01/bin/setupCmdLine.sh
+        && export WAS85_HOME=/opt/IBM/WebSphere/AppServer
+        && /opt/IBM/WebSphere/AppServer/profiles/AppSrv01/bin/startServer.sh server1
+        && mvn -P codeship -DskipTests=false test
+        && /opt/IBM/WebSphere/AppServer/profiles/AppSrv01/bin/stopServer.sh server1"
+
