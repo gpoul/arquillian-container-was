@@ -1,5 +1,7 @@
-image: gpoul/arquillian-websphere:arquillian-wasv9-ci
+image:
+  file: .gitpod.Dockerfile
 
 tasks:
-  - init: mvn clean compile
-    command: mvn test
+  - before: export WAS9_HOME=/opt/IBM/WebSphere/AppServer
+    init: mvn clean compile
+    command: . /opt/IBM/WebSphere/AppServer/profiles/AppSrv01/bin/setupCmdLine.sh && /opt/IBM/WebSphere/AppServer/profiles/AppSrv01/bin/startServer.sh server1
