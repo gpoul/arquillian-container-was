@@ -1,0 +1,5 @@
+image: gpoul/arquillian-websphere:arquillian-wasv9-ci
+
+tasks:
+  - init: mvn clean compile
+    command: mvn test
